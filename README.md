@@ -51,6 +51,7 @@ The storefront only needs `BYPASS_SECRET` to run. The `STORE_BUSINESS_AGENT_*` v
 | `pnpm start` | Serve the production build |
 | `pnpm lint` | Wired to `eslint .`, but ESLint is not installed yet — this fails until a linter is added |
 
+
 There is no test framework configured.
 
 ## Project structure
