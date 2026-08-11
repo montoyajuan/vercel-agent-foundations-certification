@@ -14,7 +14,7 @@ export async function chatFlow(messages: UIMessage[]) {
   const modelMessages = await convertToModelMessages(messages);
 
   const agent = new DurableAgent({
-    model: "anthropic/claude-sonnet-4.6",
+    model: "anthropic/claude-sonnet-5",
     instructions: `You are a helpful assistant for the Vercel swag store.
     When the user asks about products, availability, or recommendations, use the searchProducts tool to look up real catalog data before answering.
     When asked about a type or category of product use the getAllCategories tool for getting valid categories before using searchProducts

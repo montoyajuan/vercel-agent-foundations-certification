@@ -43,6 +43,6 @@ import { searchProducts, getAllCategories, getProductDetails, returnOrder } from
 export type ShoppingAgentUIMessage = InferAgentUIMessage<typeof shoppingAgent>;
 export type SearchProductsToolInvocation = UIToolInvocation<typeof searchProducts>;
 export const shoppingAgent = new ToolLoopAgent({ 
-    model: "anthropic/claude-sonnet-4.6", 
+    model: "anthropic/claude-sonnet-5", 
     instructions: AGENT_SYSTEM_PROMPT,
     tools: { searchProducts, getAllCategories, returnOrder } });
