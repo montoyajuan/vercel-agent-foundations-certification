@@ -26,15 +26,49 @@ import {
   PromptInputTools,
 } from "@/components/ai-elements/prompt-input";
 
+import { useChat } from "@ai-sdk/react"; 
+import { Message, MessageContent, MessageResponse } from "./ai-elements/message"; 
+
+import type { ShoppingAgentUIMessage } from "@/lib/agent"; 
+import { AgentProductList } from "./agent-product-list"; 
+
 export function AgentChat() {
   const [input, setInput] = useState("");
 
-  const handleSubmit = (message: PromptInputMessage) => {};
+  const { messages, error, sendMessage } = useChat<ShoppingAgentUIMessage>();  
+
+  const handleSubmit = (message: PromptInputMessage) => { 
+    sendMessage({ text: input }); 
+    setInput(""); 
+  }; 
+
+  if (error) return <div>{error.message}</div>;
 
   return (
     <div className="flex h-full min-h-0 flex-col">
       <Conversation className="flex-1">
-        <ConversationContent>{null}</ConversationContent>
+        <ConversationContent>
+          {messages.map((m) =>
+            m.parts.map((p, i) => { 
+              switch (p.type) { 
+                case "text": 
+                  return ( 
+                    <Message key={`${m.id}-${i}`} from={m.role}>
+                      <MessageContent>
+                        <MessageResponse>{p.text}</MessageResponse>
+                      </MessageContent>
+                    </Message>
+                  ); 
+                case "tool-searchProducts": 
+                  return ( 
+                    <AgentProductList key={`${m.id}-${i}`} invocation={p} />
+                  ); 
+                default: 
+                  return null; 
+              } 
+            }) 
+          )}
+        </ConversationContent>
         <ConversationScrollButton />
       </Conversation>
 
