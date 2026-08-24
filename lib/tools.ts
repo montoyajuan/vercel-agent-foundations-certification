@@ -93,18 +93,33 @@ export const getAllCategories = tool({
 });
 
 export const getProductDetails = tool({
-  description: 'Search the vercel swag store product catalog',
+  description: `Get comprehensive details about a specific product using its ID or slug.
+Use this when:
+- User mentions a specific product ID (e.g., "What's product 12345?")
+- User references a product by exact name from previous search results
+- User asks for complete specifications (materials, dimensions, variants, stock details)
+- Following up on a specific product from searchProducts results
+- User wants to see all available images or detailed description
+
+Returns full product object including all images, complete description, pricing, category, and metadata.
+Do NOT use this for discovery or browsing - use searchProducts instead.`,
   inputSchema: z.object({
-    id: z.string().describe('ID or slug of the product for retrieveing details'),
+    id: z.string().describe('Product ID or URL-friendly slug (e.g., "12345" or "black-hoodie"). Get this from searchProducts results or user input.'),
   }),
   execute: async({id}) => {
-    "use step"; 
-    console.log("[getProductDetails]");
+    "use step";
+    console.log("[getProductDetails]", id);
     try{
       const product = await getProductById(id);
-      return product;
+      return {
+        success: true,
+        product,
+      };
     } catch (err) {
       console.error(err);
+      const message =
+        err instanceof ApiRequestError ? err.message : "Unknown error";
+      return { success: false, product: null, error: message };
     }
   }
 });

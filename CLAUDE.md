@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Package manager is **pnpm** (see `pnpm-lock.yaml`).
 
-- `pnpm dev` — start the Next.js dev server on http://localhost:3000
+- `pnpm dev` — start the Next.js dev server on http://localhost:3001
 - `pnpm build` — production build
 - `pnpm start` — serve the production build
 - `pnpm lint` — wired but `eslint` is not installed; the script will fail until a linter is added

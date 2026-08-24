@@ -27,13 +27,14 @@ import {
 } from "@/components/ai-elements/prompt-input";
 import { Suggestion, Suggestions } from "@/components/ai-elements/suggestion";
 
-import { 
-  Message, 
-  MessageContent, 
-  MessageResponse, 
-} from "./ai-elements/message"; 
-import { useChat } from "@ai-sdk/react"; 
-import { DefaultChatTransport } from "ai"; 
+import {
+  Message,
+  MessageContent,
+  MessageResponse,
+} from "./ai-elements/message";
+import { useChat } from "@ai-sdk/react";
+import { DefaultChatTransport } from "ai";
+import { ErrorBoundary } from "@/components/error-boundary"; 
 
 const SUGGESTIONS = [
   "Show me low-stock items",
@@ -58,10 +59,11 @@ export function AdminAgentChat() {
     sendMessage({ text: suggestion }); 
   };
 
-  if (error) return <div>{error.message}</div>; 
+  if (error) return <div>{error.message}</div>;
 
   return (
-    <div className="flex h-full min-h-0 flex-col">
+    <ErrorBoundary>
+      <div className="flex h-full min-h-0 flex-col">
       <Conversation className="flex-1">
         <ConversationContent>
           {messages.map((m) =>
@@ -76,10 +78,30 @@ export function AdminAgentChat() {
                     </Message>
                   );
                   case "tool-bash": {
-                    const input = p.input as { command?: string } | undefined;
-                    const output = p.output as
-                      | { stdout?: string; stderr?: string }
-                      | undefined;
+                    // Runtime validation for bash tool input/output
+                    const input =
+                      p.input &&
+                      typeof p.input === "object" &&
+                      "command" in p.input &&
+                      typeof p.input.command === "string"
+                        ? { command: p.input.command }
+                        : undefined;
+
+                    const output =
+                      p.output &&
+                      typeof p.output === "object" &&
+                      ("stdout" in p.output || "stderr" in p.output)
+                        ? {
+                            stdout:
+                              "stdout" in p.output && typeof p.output.stdout === "string"
+                                ? p.output.stdout
+                                : undefined,
+                            stderr:
+                              "stderr" in p.output && typeof p.output.stderr === "string"
+                                ? p.output.stderr
+                                : undefined,
+                          }
+                        : undefined;
                     return (
                       <div
                         key={`${m.id}-${i}`}
@@ -167,5 +189,6 @@ export function AdminAgentChat() {
         </PromptInput>
       </div>
     </div>
+    </ErrorBoundary>
   );
 }
